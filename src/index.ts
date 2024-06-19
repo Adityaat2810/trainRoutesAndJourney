@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { cityRouter } from './routes/cityRoutes';
 import { stationRouter } from './routes/stationRoutes';
+import { trainRouter } from './routes/trainRoutes';
 
 export const app = new Hono<{
   Bindings: {
@@ -11,5 +12,7 @@ export const app = new Hono<{
 
 app.route('/api/v1/city', cityRouter)
 app.route('/api/v1/station', stationRouter)
+app.route('/api/v1/train', trainRouter)
+
 
 export default app
