@@ -1,7 +1,7 @@
 name = "routes-service"
 compatibility_date = "2023-12-01"
 
-# [vars]
+[vars]
 DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiN2FjNzdlMTMtZGQ0ZS00MTEzLWI3YTItN2VmZTMyZTdiNDNiIiwidGVuYW50X2lkIjoiZTZjMzU3MTJmMzI3M2UxOWQyNTgzMTU2NGZhMWZiN2U3YmNhNDM2Zjc0NWM2MmRmOTAyOGMyYjczZDA5YTcyNSIsImludGVybmFsX3NlY3JldCI6IjViZmE1YTgyLTYyYjEtNGFmZi05NDI0LTJmZDk4Mzc2MjRiMyJ9.EYnrISCZUqKShRPrXBWS7EfW00bgnD56B-YeC8dZg5k"
 # MY_VAR = "my-variable"
 
