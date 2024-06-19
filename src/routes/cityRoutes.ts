@@ -121,12 +121,36 @@ cityRouter.get('/all/bulk', async (c) => {
             datasourceUrl:c.env.DATABASE_URL,
         }).$extends(withAccelerate());
 
-        const cities = await prisma.city.findMany();
-        
+        const filter =  c.req.queries()
+        console.log(filter);
+
+        if(!filter){
+
+            const cities = await prisma.city.findMany();
+            return c.json({
+                data:cities,
+                message:"successfully fetched all city"    
+            });
+        }
+
+        let nameStarts=filter.name[0]
+        const cities = await prisma.city.findMany({
+            where:{
+                name:{
+                    startsWith:nameStarts
+                }
+            }
+        });
+
         return c.json({
             data:cities,
             message:"successfully fetched all city"    
         });
+
+
+        
+
+       
     } catch (error) {
         console.log(error);
         
