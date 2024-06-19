@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id      Int      @id @default(autoincrement())
+  name    String
+  state   String
+  country String
+  stations Station[]
+}
+
+model Station {
+  id             Int       @id @default(autoincrement())
+  name           String
+  code           String
+  city_id        Int
+  city           City      @relation(fields: [city_id], references: [id])
+  routes_from    Route[]   @relation("routes_from")
+  routes_to      Route[]   @relation("routes_to")
+  stops          Stop[]
+}
+
+model Train {
+  id         Int         @id @default(autoincrement())
+  name       String
+  number     String
+  type       String
+  journeys   Journey[]
+  trainClasses TrainClass[]
+}
+
+model Route {
+  id                    Int         @id @default(autoincrement())
+  source_station_id     Int
+  destination_station_id Int
+  source_station        Station     @relation("routes_from", fields: [source_station_id], references: [id])
+  destination_station   Station     @relation("routes_to", fields: [destination_station_id], references: [id])
+  journeys              Journey[]
+  stops                 Stop[]      // Define the opposite relation field
+}
+
+model Stop {
+  id              Int      @id @default(autoincrement())
+  route_id        Int
+  station_id      Int
+  arrival_time    DateTime?
+  departure_time  DateTime?
+  stop_number     Int
+  route           Route    @relation(fields: [route_id], references: [id])
+  station         Station  @relation(fields: [station_id], references: [id])
+  @@unique([route_id, stop_number]) // Ensure stop_number is unique per route
+}
+
+model Journey {
+  id               Int        @id @default(autoincrement())
+  route_id         Int
+  train_id         Int
+  journey_date     DateTime
+  unique_journey_id String     @unique
+  status           String
+  departure_time   DateTime?  // Departure time for the journey
+  arrival_time     DateTime?  // Arrival time for the journey
+  route            Route      @relation(fields: [route_id], references: [id])
+  train            Train      @relation(fields: [train_id], references: [id])
+  prices           Price[]
+}
+
+model Class {
+  id            Int         @id @default(autoincrement())
+  name          String
+  trainClasses TrainClass[]
+  prices        Price[]
+}
+
+model TrainClass {
+  id         Int      @id @default(autoincrement())
+  train_id   Int
+  class_id   Int
+  capacity   Int
+  train      Train    @relation(fields: [train_id], references: [id])
+  class      Class    @relation(fields: [class_id], references: [id])
+  @@unique([train_id, class_id]) // Ensure combination of train_id and class_id is unique
+}
+
+model Price {
+  id         Int       @id @default(autoincrement())
+  journey_id Int
+  class_id   Int
+  price      Float
+  journey    Journey   @relation(fields: [journey_id], references: [id])
+  class      Class     @relation(fields: [class_id], references: [id])
+  @@unique([journey_id, class_id]) // Ensure combination of journey_id and class_id is unique
+}
