@@ -111,51 +111,36 @@ cityRouter.get('/:id',async (c)=>{
 
 // Todo:pagination
 cityRouter.get('/all/bulk', async (c) => {
-
-  
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+    
     try {
+        const filter = c.req.queries();
 
-        console.log(' i am here');
-        
-        const prisma = new PrismaClient({
-            datasourceUrl:c.env.DATABASE_URL,
-        }).$extends(withAccelerate());
-
-        const filter =  c.req.queries()
-        console.log(filter);
-
-        if(!filter){
-
-            const cities = await prisma.city.findMany();
-            return c.json({
-                data:cities,
-                message:"successfully fetched all city"    
-            });
-        }
-
-        let nameStarts=filter.name[0]
-        const cities = await prisma.city.findMany({
-            where:{
-                name:{
-                    startsWith:nameStarts
+        let cities;
+        if (filter && filter.name && filter.name[0]) {
+            const nameStarts = filter.name[0];
+            cities = await prisma.city.findMany({
+                where: {
+                    name: {
+                        startsWith: nameStarts
+                    }
                 }
-            }
-        });
-
-        return c.json({
-            data:cities,
-            message:"successfully fetched all city"    
-        });
-
-
+            });
+        } else {
+            cities = await prisma.station.findMany();
+        }
         
-
-       
+        return c.json({
+            data: cities,
+            message: "successfully fetched all stations"
+        });
     } catch (error) {
         console.log(error);
-        
         return c.json({
-            error
+            data: null,
+            message: "failed to fetch stations"
         });
     }
 });
